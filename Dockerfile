@@ -1,12 +1,9 @@
-FROM quay.io/prometheus/busybox:latest
-LABEL maintainer="The Prometheus Authors <prometheus-developers@googlegroups.com>"
+FROM       ubuntu
+MAINTAINER Prometheus Team <prometheus-developers@googlegroups.com>
+EXPOSE     9091
+WORKDIR    /pushgateway
+ENTRYPOINT [ "/pushgateway/bin/pushgateway" ]
 
-COPY pushgateway /bin/pushgateway
-
-EXPOSE 9091
-RUN mkdir -p /pushgateway && chown nobody:nogroup /pushgateway
-WORKDIR /pushgateway
-
-USER 65534
-
-ENTRYPOINT [ "/bin/pushgateway" ]
+RUN        apt-get -qy update && apt-get install -yq make git curl sudo mercurial vim-common
+ADD        . /pushgateway
+RUN        make bin/pushgateway
